@@ -11,10 +11,9 @@ public class TrafficCar : MonoBehaviour
 
     void Update()
     {
-        // Move the car backward along the Z axis toward the player
+
         transform.Translate(Vector3.forward * backwardSpeed * Time.deltaTime);
 
-        // Delete the car once you pass it so the game doesn't crash from too many objects
         if (transform.position.z < despawnZPosition)
         {
             Destroy(gameObject);

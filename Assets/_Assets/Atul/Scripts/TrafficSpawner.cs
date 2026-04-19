@@ -33,13 +33,10 @@ public class TrafficSpawner : MonoBehaviour
     {
         if (trafficPrefabs.Length == 0 || lanePositions.Length == 0) return;
 
-        // 1. Pick a random exact lane from the array
         float exactXLane = lanePositions[Random.Range(0, lanePositions.Length)];
 
-        // 2. Set the spawn position using the exact lane
         Vector3 spawnPosition = new Vector3(exactXLane, spawnHeight, playerCar.position.z + spawnDistanceZ);
 
-        // 3. Spawn the car
         GameObject selectedPrefab = trafficPrefabs[Random.Range(0, trafficPrefabs.Length)];
         Instantiate(selectedPrefab, spawnPosition, Quaternion.identity);
     }

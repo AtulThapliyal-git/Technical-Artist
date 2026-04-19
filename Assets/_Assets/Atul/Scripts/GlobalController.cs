@@ -36,13 +36,11 @@ public class GlobalBendController : MonoBehaviour
         Vector2 bendAmount = new Vector2(horizontalBend, verticalDrop);
         Vector3 originPos = Vector3.zero;
 
-        // Permanently lock the bend to the Main Camera, whether playing or editing
         if (Camera.main != null)
         {
             originPos = Camera.main.transform.position;
         }
 
-        // Push the values directly into the materials
         foreach (Material mat in bendingMaterials)
         {
             if (mat != null)

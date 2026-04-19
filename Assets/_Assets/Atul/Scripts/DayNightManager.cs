@@ -48,55 +48,51 @@ public class CustomDayNightManager : MonoBehaviour
 
     void Update()
     {
-        // Progress time
+
         timeOfDay += Time.deltaTime / fullCycleDuration;
         if (timeOfDay >= 1f) timeOfDay -= 1f; 
 
-        // 1. BUTTERY SMOOTH CROSSFADES (Ease-In & Ease-Out)
         float dawnAlpha = 0f, dayAlpha = 0f, sunsetAlpha = 0f, nightAlpha = 0f;
 
-        // 0.8 to 1.0 (Long, slow ease from Night to Dawn)
         if (timeOfDay >= 0.8f) {
             dawnAlpha = SmoothBlend(timeOfDay, 0.8f, 1.0f);
             nightAlpha = 1f - dawnAlpha;
         } 
-        // 0.0 to 0.2 (Long, slow ease from Dawn to Day)
         else if (timeOfDay < 0.2f) {
             dayAlpha = SmoothBlend(timeOfDay, 0.0f, 0.2f);
             dawnAlpha = 1f - dayAlpha;
         } 
-        // Solid Day
+       
         else if (timeOfDay >= 0.2f && timeOfDay < 0.35f) {
             dayAlpha = 1f;
         } 
-        // Day to Sunset
+       
         else if (timeOfDay >= 0.35f && timeOfDay < 0.4f) {
             sunsetAlpha = SmoothBlend(timeOfDay, 0.35f, 0.4f);
             dayAlpha = 1f - sunsetAlpha;
         } 
-        // Sunset to Night
+        
         else if (timeOfDay >= 0.4f && timeOfDay < 0.45f) {
             nightAlpha = SmoothBlend(timeOfDay, 0.4f, 0.45f);
             sunsetAlpha = 1f - nightAlpha;
         } 
-        // Solid Night
+       
         else if (timeOfDay >= 0.45f && timeOfDay < 0.8f) {
             nightAlpha = 1f;
         }
 
-        // Slight overlap boost so the sky never looks hollow during crossfades
         dawnAlpha = Mathf.Clamp01(dawnAlpha * 1.2f);
         dayAlpha = Mathf.Clamp01(dayAlpha * 1.2f);
         sunsetAlpha = Mathf.Clamp01(sunsetAlpha * 1.2f);
         nightAlpha = Mathf.Clamp01(nightAlpha * 1.2f);
 
-        // 2. APPLY FADES (NO SCROLLING)
+        
         SetPlaneAlpha(dawnSky, dawnAlpha);
         SetPlaneAlpha(daySky, dayAlpha);
         SetPlaneAlpha(sunsetSky, sunsetAlpha);
         SetPlaneAlpha(nightSky, nightAlpha);
         
-        // 3. CLOUD SCROLLING LOGIC
+       
         currentCloudOffset += cloudScrollSpeed * Time.deltaTime;
 
         SetCloudAlphaAndScroll(dawnClouds, dawnAlpha, currentCloudOffset);
@@ -104,7 +100,7 @@ public class CustomDayNightManager : MonoBehaviour
         SetCloudAlphaAndScroll(sunsetClouds, sunsetAlpha, currentCloudOffset);
         SetCloudAlphaAndScroll(nightClouds, nightAlpha, currentCloudOffset);
 
-        // 4. MATERIAL SWAPPING
+        
         Material currentMat = dayMaterial;
         if (dawnAlpha > Mathf.Max(dayAlpha, sunsetAlpha, nightAlpha)) currentMat = dawnMaterial;
         else if (sunsetAlpha > Mathf.Max(dawnAlpha, dayAlpha, nightAlpha)) currentMat = sunsetMaterial;
@@ -118,10 +114,8 @@ public class CustomDayNightManager : MonoBehaviour
             }
         }
 
-        // 5. APPLY AMBIENT LIGHT
         RenderSettings.ambientLight = ambientLightColor.Evaluate(timeOfDay);
 
-        // 6. SUN, MOON, AND SHADOWS
         if (sunPivot != null && moonPivot != null && directionalLight != null)
         {
             if (timeOfDay < 0.1f) {
@@ -156,7 +150,6 @@ public class CustomDayNightManager : MonoBehaviour
         }
     }
 
-    // --- THE MAGIC SMOOTHING FUNCTION ---
     private float SmoothBlend(float time, float start, float end)
     {
         float t = Mathf.InverseLerp(start, end, time);
