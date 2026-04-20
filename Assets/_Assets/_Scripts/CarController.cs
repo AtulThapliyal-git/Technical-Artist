@@ -43,26 +43,25 @@ public class CarController : MonoBehaviour
         HandleMouseSwipe();
         HandleTouchSwipe();
 
-
         float currentX = transform.position.x;
         float newX = Mathf.Lerp(currentX, targetPosition.x, Time.deltaTime * speed);
         transform.position = new Vector3(newX, transform.position.y, transform.position.z);
 
-       
-        float xVelocity = (newX - lastXPosition) / Time.deltaTime;
+        float xVelocity = 0f;
+        if (Time.deltaTime > 0.0001f) 
+        {
+            xVelocity = (newX - lastXPosition) / Time.deltaTime;
+        }
         lastXPosition = newX;
     
         float targetRoll = -xVelocity * leanMultiplier;
         float targetYaw = xVelocity * steerMultiplier;
 
-    
         targetRoll = Mathf.Clamp(targetRoll, -maxLeanAngle, maxLeanAngle);
         targetYaw = Mathf.Clamp(targetYaw, -maxSteerAngle, maxSteerAngle);
 
-
         Quaternion targetRotation = Quaternion.Euler(0, targetYaw, targetRoll);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSmoothness);
-        
 
         isMoving = Mathf.Abs(targetPosition.x - transform.position.x) > 0.05f;
     }
